@@ -487,36 +487,31 @@
 /* GRID FIX (uniform tiles) */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-auto-rows: 190px;
+  gap: 0.8rem;
   max-width: 1200px;
   margin: 3rem auto 0;
-
-  /* 🔥 important: makes all items same height */
-  grid-auto-rows: 260px;
 }
 
-/* ITEM CONTAINER */
 .gallery-item {
   border-radius: 16px;
   overflow: hidden;
   background: white;
-  display: block;
   position: relative;
   box-shadow: 0 4px 20px rgba(139,58,82,0.1);
 }
 
-/* IMAGE FIX (auto fit ANY ratio) */
 .gallery-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;        /* 🔥 key fix */
-  object-position: center;  /* keeps subject centered */
+  object-fit: cover;
+  object-position: center;
   display: block;
-  transition: transform 0.5s ease;
+  transition: transform 0.4s ease;
+  will-change: transform;
 }
 
-/* hover zoom */
 .gallery-item:hover img {
   transform: scale(1.05);
 }
@@ -707,6 +702,23 @@
     opacity: 1;
   }
 }
+
+#music-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(139, 58, 82, 0.92);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 50px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  user-select: none;
+}
 </style>
 </head>
 <body>
@@ -827,17 +839,18 @@
       <p class="highlight">2:30 PM</p>
     </div>
     <div class="event-card">
-      <div class="event-icon">🏡</div>
-      <h3>Venue</h3>
-      <p>8 Kings Restaurant <br> & Events Place</p>
-      <p class="highlight">Balagtas, Bulacan</p>
-    </div>
-    <div class="event-card">
       <div class="event-icon">👗</div>
       <h3>Attire</h3>
       <p>Dress Code:</p>
       <p class="highlight">Semi-Formal Attire</p>
     </div>
+    <div class="event-card">
+      <div class="event-icon">🏡</div>
+      <h3>Venue</h3>
+      <p>8 Kings Restaurant <br> & Events Place</p>
+      <p class="highlight">Balagtas, Bulacan</p>
+    </div>
+
   </div>
 
   <!-- Map -->
@@ -962,53 +975,53 @@
 </section>
 
 <!-- GALLERY -->
+
 <section id="gallery">
   <p class="section-eyebrow fade-in">Memories in Bloom</p>
   <h2 class="section-title fade-in">Photo <em>Gallery</em></h2>
 
-  <div class="gallery-grid fade-in">
+<div class="gallery-grid">
 
-    <div class="gallery-item">
-      <img src="1.jpg" alt="Photo 1">
-    </div>
-
-    <div class="gallery-item">
-      <img src="2.jpg" alt="Photo 2">
-    </div>
-
-    <div class="gallery-item">
-      <img src="3.jpg" alt="Photo 3">
-    </div>
-
-    <div class="gallery-item">
-      <img src="4.jpg" alt="Photo 4">
-    </div>
-
-    <div class="gallery-item">
-      <img src="5.jpg" alt="Photo 5">
-    </div>
-
-    <div class="gallery-item">
-      <img src="6.jpg" alt="Photo 6">
-    </div>
-
-    <div class="gallery-item">
-      <img src="7.jpg" alt="Photo 7">
-    </div>
-
-    <div class="gallery-item">
-      <img src="8.jpg" alt="Photo 8">
-    </div>
-
-    <div class="gallery-item">
-      <img src="9.jpg" alt="Photo 9">
-    </div>
-
-    <div class="gallery-item">
-      <img src="10.jpg" alt="Photo 10">
-    </div>
-
+  <div class="gallery-item">
+    <img src="1.jpg" alt="Photo 1" loading="lazy" decoding="async">
   </div>
+
+  <div class="gallery-item">
+    <img src="2.jpg" alt="Photo 2" loading="lazy" decoding="async">
+  </div>
+
+  <div class="gallery-item">
+    <img src="3.jpg" alt="Photo 3" loading="lazy" decoding="async">
+  </div>
+
+  <div class="gallery-item">
+    <img src="4.jpg" alt="Photo 4" loading="lazy" decoding="async">
+  </div>
+
+  <div class="gallery-item">
+    <img src="5.jpg" alt="Photo 5" loading="lazy" decoding="async">
+  </div>
+
+  <div class="gallery-item">
+    <img src="6.jpg" alt="Photo 6" loading="lazy" decoding="async">
+  </div>
+
+  <div class="gallery-item">
+    <img src="7.jpg" alt="Photo 7" loading="lazy" decoding="async">
+  </div>
+
+  <div class="gallery-item">
+    <img src="8.jpg" alt="Photo 8" loading="lazy" decoding="async">
+  </div>
+
+  <div class="gallery-item">
+    <img src="9.jpg" alt="Photo 9" loading="lazy" decoding="async">
+  </div>
+
+  <div class="gallery-item">
+    <img src="10.jpg" alt="Photo 10" loading="lazy" decoding="async">
+  </div>
+</div>
 </section>
 
 
@@ -1106,6 +1119,12 @@
   <img id="lightbox-img" src="" alt="">
 </div>
 
+<audio id="bg-music" loop>
+  <source src="young-beautiful.mp3" type="audio/mpeg">
+</audio>
+
+<div id="music-btn">🔇 Music OFF</div>
+
 
 
 <script>
@@ -1185,15 +1204,16 @@
 
 /* ───── IMAGE ZOOM ───── */
 
-document.querySelectorAll('img').forEach(img => {
+document.querySelectorAll('.gallery-item img, .slide-img-wrap img, .hero-photo-frame img, .about-photo').forEach(img => {
   img.classList.add('zoomable');
 
   img.addEventListener('click', function () {
     if (!this.src) return;
 
-    document.getElementById('lightbox-img').src = this.src;
-    document.getElementById('lightbox').classList.add('show');
+    const lightboxImg = document.getElementById('lightbox-img');
+    lightboxImg.src = this.src;
 
+    document.getElementById('lightbox').classList.add('show');
     document.body.style.overflow = 'hidden';
   });
 });
@@ -1209,6 +1229,41 @@ lightbox.addEventListener('click', e => {
   if (e.target === lightbox || e.target.id === 'lightbox-img') {
     lightbox.classList.remove('show');
     document.body.style.overflow = '';
+  }
+});
+
+const music = document.getElementById("bg-music");
+const btn = document.getElementById("music-btn");
+
+let isPlaying = false;
+let isMuted = true;
+
+// Start music on FIRST user click anywhere
+function startMusic() {
+  if (!isPlaying) {
+    music.play().catch(() => {});
+    isPlaying = true;
+  }
+}
+
+// trigger anywhere inside page
+document.addEventListener("click", startMusic, { once: true });
+
+// toggle mute/unmute
+btn.addEventListener("click", (e) => {
+  e.stopPropagation(); // important para di ma-trigger ulit start event
+
+  isMuted = !isMuted;
+  music.muted = isMuted;
+
+  if (isMuted) {
+    btn.textContent = "🔇 Music OFF";
+  } else {
+    btn.textContent = "🎵 Music ON";
+
+    // ensure playing when unmuted
+    music.play().catch(() => {});
+    isPlaying = true;
   }
 });
 
