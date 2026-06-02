@@ -479,56 +479,73 @@
     border-radius: 4px;
   }
 
-  /* ── GALLERY ── */
-  #gallery { background: linear-gradient(to bottom, var(--cream), var(--petal)); }
+ /* ── GALLERY ── */
+#gallery {
+  background: linear-gradient(to bottom, var(--cream), var(--petal));
+}
 
+/* GRID FIX (uniform tiles) */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 3rem auto 0;
+
+  /* 🔥 important: makes all items same height */
+  grid-auto-rows: 260px;
+}
+
+/* ITEM CONTAINER */
+.gallery-item {
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  display: block;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(139,58,82,0.1);
+}
+
+/* IMAGE FIX (auto fit ANY ratio) */
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* 🔥 key fix */
+  object-position: center;  /* keeps subject centered */
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+/* hover zoom */
+.gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+/* placeholder (unchanged but cleaner) */
+.gallery-placeholder {
+  text-align: center;
+  color: var(--gold-dark);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-style: italic;
+  padding: 2rem;
+  opacity: 0.6;
+}
+
+/* responsive */
+@media (max-width: 768px) {
   .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    max-width: 900px;
-    margin: 3rem auto 0;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 220px;
   }
+}
 
-  @media (max-width: 600px) {
-    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 240px;
   }
-
-  .gallery-item {
-    border-radius: 16px;
-    overflow: hidden;
-    background: var(--gold-light);
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 20px rgba(139,58,82,0.1);
-    position: relative;
-  }
-
-  .gallery-item:first-child {
-    grid-column: span 2;
-    aspect-ratio: 2/1;
-  }
-
-  .gallery-item img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.5s ease;
-  }
-
-  .gallery-item:hover img { transform: scale(1.04); }
-
-  .gallery-placeholder {
-    text-align: center;
-    color: var(--gold-dark);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
-    font-style: italic;
-    padding: 1rem;
-    opacity: 0.6;
-  }
+}
 
   /* ── RSVP ── */
   #rsvp { background: var(--petal); }
@@ -635,6 +652,61 @@
 
   .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
   .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+ /* ───── IMAGE ZOOM LIGHTBOX ───── */
+
+.zoomable {
+  cursor: zoom-in;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: .25s ease;
+}
+
+.lightbox.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox img {
+  max-width: 95vw;
+  max-height: 92vh;
+  object-fit: contain;
+  border-radius: 12px;
+  cursor: zoom-out;
+  animation: zoomPop .25s ease;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  color: white;
+  font-size: 2.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+@keyframes zoomPop {
+  from {
+    transform: scale(.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 </style>
 </head>
 <body>
@@ -671,7 +743,7 @@
 
   <div class="hero-content">
     <p class="hero-eyebrow">You are cordially invited to celebrate</p>
-    <h1 class="hero-name">Janica<br><em>Escanilla</em></h1>
+    <h1 class="hero-name">Janica<br><em></em></h1>
     <p class="hero-sub">A Decade &amp; Eight</p>
     <div class="gold-rule">
       <span></span>
@@ -698,6 +770,7 @@
   <a href="#event">Event</a>
   <a href="#eighteen">18 Programs</a>
   <a href="#gallery">Gallery</a>
+  <a href="#reminders">Reminders</a>
   <a href="#rsvp">RSVP</a>
 </nav>
 
@@ -719,11 +792,11 @@
   <h2 class="section-title fade-in">Meet <em>Janica</em></h2>
   <div class="about-inner">
     <div class="fade-in">
-      <img class="about-photo" src="1st.jpg" alt="Janica Escanilla"
+      <img class="about-photo" src="about.jpg" alt="Janica Escanilla"
         onerror="this.style.borderRadius='20px'; this.style.background='linear-gradient(135deg,#fce8ee,#e8d5b0)'; this.style.height='360px'; this.removeAttribute('src');">
     </div>
     <div class="about-text fade-in">
-      <p><strong>Janica Escanilla</strong> blossoms into womanhood surrounded by the love of family and friends who have watched her grow into the remarkable young woman she is today.</p>
+      <p><strong>Janica Galang Escanilla</strong> blossoms into womanhood surrounded by the love of family and friends who have watched her grow into the remarkable young woman she is today.</p>
       <p>With a heart as warm as the summer roses and a smile that lights up every room, Janica's eighteenth year marks the beginning of a beautiful new chapter.</p>
       <p>Graceful, kind, and full of dreams — she steps into the world of womanhood with poise and wonder. <em>This night is dedicated to her.</em></p>
       <div class="gold-rule" style="justify-content:flex-start; max-width:200px;">
@@ -741,7 +814,8 @@
 
   <div class="event-cards fade-in">
     <div class="event-card">
-      <div class="event-icon">📅</div>
+      <div class="event-icon">🗓️
+</div>
       <h3>Date</h3>
       <p>Saturday</p>
       <p class="highlight">July 04, 2026</p>
@@ -750,7 +824,7 @@
       <div class="event-icon">🕖</div>
       <h3>Time</h3>
       <p>Doors open at</p>
-      <p class="highlight">3:00 PM</p>
+      <p class="highlight">2:30 PM</p>
     </div>
     <div class="event-card">
       <div class="event-icon">🏡</div>
@@ -761,8 +835,8 @@
     <div class="event-card">
       <div class="event-icon">👗</div>
       <h3>Attire</h3>
-      <p>Garden Formal</p>
-      <p class="highlight">Floral Tones Welcome</p>
+      <p>Dress Code:</p>
+      <p class="highlight">Semi-Formal Attire</p>
     </div>
   </div>
 
@@ -891,21 +965,83 @@
 <section id="gallery">
   <p class="section-eyebrow fade-in">Memories in Bloom</p>
   <h2 class="section-title fade-in">Photo <em>Gallery</em></h2>
+
   <div class="gallery-grid fade-in">
-    <div class="gallery-item" style="grid-column:span 2; aspect-ratio:2/1;">
-      <img src="1st.jpg" alt="Janica's Debut"
-        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-      <div class="gallery-placeholder" style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">Featured Photo</div>
-    </div>
+
     <div class="gallery-item">
-      <div class="gallery-placeholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.4rem;"><span style="font-size:2rem; opacity:0.4">🌸</span>Add Photo</div>
+      <img src="1.jpg" alt="Photo 1">
     </div>
-    <div class="gallery-item"><div class="gallery-placeholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.4rem;"><span style="font-size:2rem; opacity:0.4">🌷</span>Add Photo</div></div>
-    <div class="gallery-item"><div class="gallery-placeholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.4rem;"><span style="font-size:2rem; opacity:0.4">🌺</span>Add Photo</div></div>
-    <div class="gallery-item"><div class="gallery-placeholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.4rem;"><span style="font-size:2rem; opacity:0.4">✿</span>Add Photo</div></div>
-    <div class="gallery-item"><div class="gallery-placeholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.4rem;"><span style="font-size:2rem; opacity:0.4">🌸</span>Add Photo</div></div>
+
+    <div class="gallery-item">
+      <img src="2.jpg" alt="Photo 2">
+    </div>
+
+    <div class="gallery-item">
+      <img src="3.jpg" alt="Photo 3">
+    </div>
+
+    <div class="gallery-item">
+      <img src="4.jpg" alt="Photo 4">
+    </div>
+
+    <div class="gallery-item">
+      <img src="5.jpg" alt="Photo 5">
+    </div>
+
+    <div class="gallery-item">
+      <img src="6.jpg" alt="Photo 6">
+    </div>
+
+    <div class="gallery-item">
+      <img src="7.jpg" alt="Photo 7">
+    </div>
+
+    <div class="gallery-item">
+      <img src="8.jpg" alt="Photo 8">
+    </div>
+
+    <div class="gallery-item">
+      <img src="9.jpg" alt="Photo 9">
+    </div>
+
+    <div class="gallery-item">
+      <img src="10.jpg" alt="Photo 10">
+    </div>
+
   </div>
 </section>
+
+
+<!-- REMINDERS -->
+<section id="reminders">
+  <p class="section-eyebrow fade-in">Please Take Note</p>
+  <h2 class="section-title fade-in">Important <em>Reminders</em></h2>
+
+  <div class="fade-in" style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 780px;
+    margin: 2.5rem auto 0;
+    padding: 0 1rem;
+  ">
+    <!-- Pic 1: Attire & Gift Note -->
+    <div style="border-radius:20px; overflow:hidden; box-shadow:0 8px 36px rgba(139,58,82,0.15); border:2px solid var(--gold-light);">
+      <img src="reminders1.jpg" alt="Attire and Gift Note"
+        style="width:100%; height:auto; display:block;"
+        onerror="this.parentElement.style.background='linear-gradient(135deg,#fce8ee,#e8d5b0)'; this.parentElement.style.minHeight='300px'; this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.outerHTML='<p style=\'font-family:Cormorant Garamond,serif;color:var(--rose-dark);font-style:italic;padding:2rem;text-align:center;\'>Attire &amp; Gift Note</p>'">
+    </div>
+
+    <!-- Pic 2: RSVP & Important Reminders -->
+    <div style="border-radius:20px; overflow:hidden; box-shadow:0 8px 36px rgba(139,58,82,0.15); border:2px solid var(--gold-light);">
+      <img src="reminders2.jpg" alt="RSVP Reminders"
+        style="width:100%; height:auto; display:block;"
+        onerror="this.parentElement.style.background='linear-gradient(135deg,#fce8ee,#e8d5b0)'; this.parentElement.style.minHeight='300px'; this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.outerHTML='<p style=\'font-family:Cormorant Garamond,serif;color:var(--rose-dark);font-style:italic;padding:2rem;text-align:center;\'>RSVP Reminders</p>'">
+    </div>
+  </div>
+</section>
+
+
 
 <!-- RSVP -->
 <section id="rsvp">
@@ -935,7 +1071,7 @@
         📅 July 04, 2026
       </div>
       <div style="background:var(--petal); border:1px solid var(--rose); border-radius:50px; padding:0.45rem 1.1rem; font-size:0.78rem; color:var(--rose-dark); letter-spacing:0.08em;">
-        🕖 3:00 PM
+        🕖 2:30 PM
       </div>
       <div style="background:var(--petal); border:1px solid var(--rose); border-radius:50px; padding:0.45rem 1.1rem; font-size:0.78rem; color:var(--rose-dark); letter-spacing:0.08em;">
         🏡 8 Kings Restaurant & Events Place, Balagtas, Bulacan
@@ -963,6 +1099,14 @@
   <p>Turning Eighteen · July 04, 2026</p>
   <p style="margin-top:0.5rem; font-size:0.75rem; opacity:0.5;">Made with love 🌸</p>
 </footer>
+
+<!-- IMAGE LIGHTBOX -->
+<div id="lightbox" class="lightbox">
+  <span class="lightbox-close">&times;</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+
 
 <script>
   /* ── Countdown ── */
@@ -1038,6 +1182,37 @@
     { threshold: 0.12 }
   );
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+/* ───── IMAGE ZOOM ───── */
+
+document.querySelectorAll('img').forEach(img => {
+  img.classList.add('zoomable');
+
+  img.addEventListener('click', function () {
+    if (!this.src) return;
+
+    document.getElementById('lightbox-img').src = this.src;
+    document.getElementById('lightbox').classList.add('show');
+
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+const lightbox = document.getElementById('lightbox');
+
+document.querySelector('.lightbox-close').addEventListener('click', () => {
+  lightbox.classList.remove('show');
+  document.body.style.overflow = '';
+});
+
+lightbox.addEventListener('click', e => {
+  if (e.target === lightbox || e.target.id === 'lightbox-img') {
+    lightbox.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+});
+
 </script>
+</div>
 </body>
 </html>
